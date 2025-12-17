@@ -6,7 +6,10 @@ import java.awt.event.*;
 
 public class Login extends JFrame implements ActionListener{
 	private String addr, usr, passwd;
-	
+	private Connection conn;
+	public Connection getConn() {
+		return conn;
+	}
 	public Login(String addr, String usr, String passwd) {
 		this.addr = addr;
 		this.usr = usr;
@@ -17,7 +20,8 @@ public class Login extends JFrame implements ActionListener{
 	}
 	public void signIn() {
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + addr + ":3306/CSDLHOTICH?createDatabaseIfNotExist=true", usr, passwd);
+			conn = DriverManager.getConnection("jdbc:mysql://" + addr + ":3306/CSDLHOTICH?createDatabaseIfNotExist=true", usr, passwd);
+			conn.setAutoCommit(true);
 			ManagerInterface mi = new ManagerInterface("Chương trình quản lý CSDL hộ tịch");
 			mi.setVisible(true);
 			LoginUI l = Main.m;

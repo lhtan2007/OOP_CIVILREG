@@ -3,11 +3,15 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-public class LoginUI extends JFrame implements ActionListener{
+public class LoginUI extends JFrame implements ActionListener, WindowListener{
 	private JButton b1, b2;
 	private JTextField tf1, tf2, tf3;
 	private JLabel li, l0, l1, l2, l3;
 	private JPanel p0, p1, p2, p3;
+	private Login l;
+	public Login getL() {
+		return l;
+	}
 	public JTextField gettf1() {
 		return tf1;
 	}
@@ -54,9 +58,13 @@ public class LoginUI extends JFrame implements ActionListener{
 		tf1.setFont(new Font("Consolas", Font.PLAIN, 20));
 		tf2.setFont(new Font("Consolas", Font.PLAIN, 20));
 		tf3.setFont(new Font("Consolas", Font.PLAIN, 20));
+		b1.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		b2.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		
 		p3.setPreferredSize(new Dimension(500, 50));
-		p3.setLayout(new GridLayout(2, 2));
+		GridLayout g_l = new GridLayout(2, 2);
+		p3.setLayout(g_l);
+		g_l.setHgap(20);
 		//p3.setBackground(Color.RED);
 		p3.add(new JLabel());
 		p3.add(new JLabel());
@@ -68,6 +76,7 @@ public class LoginUI extends JFrame implements ActionListener{
 		
 		
 		//this.getContentPane().add(p0, BorderLayout.NORTH);
+		this.addWindowListener(this);
 		this.getContentPane().setLayout(new FlowLayout());
 		this.getContentPane().add(p0);
 		this.getContentPane().add(p1);
@@ -85,7 +94,7 @@ public class LoginUI extends JFrame implements ActionListener{
 		// TODO Auto-generated method stub
 		switch(e.getActionCommand()) {
 		case "Đăng nhập":
-			Login l = new Login(tf1.getText(), tf2.getText(), tf3.getText());
+			l = new Login(tf1.getText(), tf2.getText(), tf3.getText());
 			l.test();
 			l.signIn();
 			break;
@@ -95,5 +104,46 @@ public class LoginUI extends JFrame implements ActionListener{
 			tf3.setText("");
 			break;
 		}
+	}
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		try {
+			l.getConn().close();
+			System.out.println("Closing connection");
+		}
+		catch(Exception e1) {
+			
+		}
+	}
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
