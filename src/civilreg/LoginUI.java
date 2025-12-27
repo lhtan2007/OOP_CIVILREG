@@ -74,7 +74,6 @@ public class LoginUI extends JFrame implements ActionListener, WindowListener{
 		b1.addActionListener(this);
 		b2.addActionListener(this);
 		
-		
 		//this.getContentPane().add(p0, BorderLayout.NORTH);
 		this.addWindowListener(this);
 		this.getContentPane().setLayout(new FlowLayout());
@@ -113,13 +112,7 @@ public class LoginUI extends JFrame implements ActionListener, WindowListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		try {
-			l.getConn().close();
-			System.out.println("Closing connection");
-		}
-		catch(Exception e1) {
-			
-		}
+
 	}
 	@Override
 	public void windowClosed(WindowEvent e) {
