@@ -1,8 +1,10 @@
 package civilreg;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.sql.*;
 
-public class GKS{
+public class GKS extends RegDataManipulator{
 	private Statement st;
 	private String init = "create table GKS ("
 			+ "SoGKS varchar(10), "
@@ -29,5 +31,20 @@ public class GKS{
 	}
 	public Statement getStatement() {
 		return st;
+	}
+	@Override
+	void setData() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	void removeData() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	void addData() {
+		// TODO Auto-generated method stub
+		
 	}
 }

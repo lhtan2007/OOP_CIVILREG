@@ -16,6 +16,10 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	private JTabbedPane tp;
 	private JLabel l1, cb, cd, cm, cc, ncb, ncd, ncm, ncc; 
 	private JPanel buttons;
+	private JComboBox list_reg;
+	private GKS gks;
+	private TKDKKS dkks;
+	//private DefaultTableModel tm;
 	public ManagerInterface(String s) {
 		p1 = new JPanel();
 		p2 = new JPanel();
@@ -26,6 +30,9 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		b1 = new JButton("Thêm tờ khai");
 		b2 = new JButton("Sửa hồ sơ");
 		b3 = new JButton("Xóa hồ sơ");
+		b1.addActionListener(this);
+		b2.addActionListener(this);
+		b3.addActionListener(this);
 		tp = new JTabbedPane();
 		RegCategoryTree t = new RegCategoryTree();
 		l1 = new JLabel("Thống kê cơ bản:");
@@ -39,41 +46,15 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		ncm = new JLabel();
 		ncc = new JLabel();
 		scr = new JScrollPane();
-		DefaultTableModel tm = new DefaultTableModel() {
-			@Override
-			public int getColumnCount() {
-				return 5;
-			}
-			public boolean isCellEditable(int row, int col) {
-				return false;
-			}
-		};
 		buttons = new JPanel();
+		list_reg = new JComboBox();
 		
-		TKDKKS dkks = new TKDKKS();
+		dkks = new TKDKKS();
 		dkks.init();
-		GKS gks = new GKS();
+		gks = new GKS();
 		gks.init();
 		
-		
 		t.setBackground(Color.LIGHT_GRAY);
-		
-		p1.setPreferredSize(new Dimension(300, 720));
-		p1.setLayout(new BorderLayout());
-		p1.add(p2, BorderLayout.CENTER);
-		p1.add(p3, BorderLayout.SOUTH);
-		p1.setBackground(Color.GRAY);
-		
-		p2.setLayout(new BorderLayout());
-		p2.add(t, BorderLayout.CENTER);
-		
-		
-		
-		p3.setPreferredSize(new Dimension(p1.getWidth(), 100));
-		p3.setBackground(Color.GREEN);
-		p3.setLayout(new BorderLayout());
-		p3.add(l1, BorderLayout.NORTH);
-		p3.add(bstat, BorderLayout.CENTER);
 		
 		bstat.setPreferredSize(new Dimension(p3.getWidth(), 75));
 		bstat.setLayout(new GridLayout(2, 4));
@@ -85,43 +66,99 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		bstat.add(ncm);
 		bstat.add(cc);
 		bstat.add(ncc);
-		//l1.setSize(200, 100);
 		
-		inf.setModel(tm);
-		String colsName[] = {"Số hiệu", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký"};
-		tm.setColumnIdentifiers(colsName);
-		try {
-			ResultSet rs = dkks.getStatement().executeQuery("select TKDKKS.IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
-			while(rs.next()) {
-				String rows[] = new String[5];
-				rows[0] = rs.getString("IDTK");
-				rows[1] = rs.getString("tenNDKS");
-				rows[2] = rs.getString("ngaysinhNDKS");
-				rows[3] = rs.getString("gioitinhNDKS");
-				rows[4] = rs.getString("ngaydangky");
-				tm.addRow(rows);
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
 		
 		inf.setVisible(true);
 		inf.setSize(new Dimension(800, 600));
-		scr.setViewportView(inf);;
+		inf.getTableHeader().setReorderingAllowed(false);
+		scr.setViewportView(inf);
 		scr.setVisible(true);
-		//scr.setLayout(new BorderLayout());
 		
+		list_reg.addItem("Tờ khai đăng ký khai sinh");
+		list_reg.addItem("Tờ khai đăng ký khai tử");
+		list_reg.addItem("Tờ khai đăng ký kết hôn");
+		list_reg.addItem("Tờ khai đề nghị cấp bản sao trích lục hộ tịch");
+		list_reg.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox list = (JComboBox)e.getSource();
+				switch((String)list.getSelectedItem()) {
+				case "Tờ khai đăng ký khai sinh":
+					DefaultTableModel tm = new DefaultTableModel() {
+						@Override
+						public int getColumnCount() {
+							return 5;
+						}
+						public boolean isCellEditable(int row, int col) {
+							return false;
+						}
+					};
+					inf.setModel(tm);
+					String colsName_tkks[] = {"Số hiệu", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký"};
+					tm.setColumnIdentifiers(colsName_tkks);
+					try {
+						ResultSet rs = dkks.getStatement().executeQuery("select TKDKKS.IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
+						while(rs.next()) {
+							String rows[] = new String[5];
+							rows[0] = rs.getString("IDTK");
+							rows[1] = rs.getString("tenNDKS");
+							rows[2] = rs.getString("ngaysinhNDKS");
+							rows[3] = rs.getString("gioitinhNDKS");
+							rows[4] = rs.getString("ngaydangky");
+							tm.addRow(rows);
+						}
+					}
+					catch(Exception ex) {
+						ex.printStackTrace();
+					}
+					break;
+				case "Tờ khai đăng ký khai tử":
+					DefaultTableModel tm1 = new DefaultTableModel() {
+						@Override
+						public int getColumnCount() {
+							return 5;
+						}
+						public boolean isCellEditable(int row, int col) {
+							return false;
+						}
+					};
+					inf.setModel(tm1);
+					String colsName[] = {"Số hiệu", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký"};
+					tm1.setColumnIdentifiers(colsName);
+					try {
+						ResultSet rs = dkks.getStatement().executeQuery("select TKDKKS.IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
+						while(rs.next()) {
+							String rows[] = new String[5];
+							rows[0] = rs.getString("IDTK");
+							rows[1] = rs.getString("tenNDKS");
+							rows[2] = rs.getString("ngaysinhNDKS");
+							rows[3] = rs.getString("gioitinhNDKS");
+							rows[4] = rs.getString("ngaydangky");
+							tm1.addRow(rows);
+						}
+					}
+					catch(Exception ex) {
+						ex.printStackTrace();
+					}
+					break;
+				case "Tờ khai đăng ký kết hôn":
+					
+					break;
+				case "Tờ khai đề nghị cấp bản sao trích lục hộ tịch":
+					
+					break;
+				}
+			}
+		});
+		
+		buttons.add(list_reg);
 		buttons.add(b1);
 		buttons.add(b2);
 		buttons.add(b3);
 		
-		
-		
 		p4.setLayout(new BorderLayout());
 		p4.add(scr, BorderLayout.CENTER);
 		p4.add(buttons, BorderLayout.NORTH);
-		
 		
 		//p5
 		
@@ -130,8 +167,9 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		tp.setTitleAt(0, "Danh sách");
 		tp.setTitleAt(1, "Thống kê");
 		
+		
 		this.getContentPane().setPreferredSize(new Dimension(1280, 720));
-		this.getContentPane().add(p1, BorderLayout.WEST);
+		//this.getContentPane().add(p1, BorderLayout.WEST);
 		this.getContentPane().add(tp, BorderLayout.CENTER);
 		this.setTitle(s);
 		this.addWindowListener(this);
@@ -141,7 +179,14 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		switch(e.getActionCommand()) {
+		case "Sửa hồ sơ":
+			this.dkks.setData();
+			break;
+		case "Thêm tờ khai":
+			this.dkks.addData();
+			break;
+		}
 	}
 
 	@Override
@@ -154,6 +199,13 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
 		Main.m.setVisible(true);
+		try {
+			Main.m.getL().getConn().close();
+			System.out.println("Closing connection");
+		}
+		catch(Exception e1) {
+			
+		}
 	}
 
 	@Override
