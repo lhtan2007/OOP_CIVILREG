@@ -19,6 +19,7 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	private JComboBox list_reg;
 	private GKS gks;
 	private TKDKKS dkks;
+	private TKDKKT dkkt;
 	//private DefaultTableModel tm;
 	public ManagerInterface(String s) {
 		p1 = new JPanel();
@@ -28,8 +29,8 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		p5 = new JPanel();
 		inf = new JTable();
 		b1 = new JButton("Thêm tờ khai");
-		b2 = new JButton("Sửa hồ sơ");
-		b3 = new JButton("Xóa hồ sơ");
+		b2 = new JButton("Sửa tờ khai");
+		b3 = new JButton("Xóa tờ khai");
 		b1.addActionListener(this);
 		b2.addActionListener(this);
 		b3.addActionListener(this);
@@ -53,6 +54,8 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		dkks.init();
 		gks = new GKS();
 		gks.init();
+		dkkt = new TKDKKT();
+		dkkt.init();
 		
 		t.setBackground(Color.LIGHT_GRAY);
 		
@@ -94,10 +97,10 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 						}
 					};
 					inf.setModel(tm);
-					String colsName_tkks[] = {"Số hiệu", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký"};
+					String colsName_tkks[] = {"Số tờ khai", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký khai sinh"};
 					tm.setColumnIdentifiers(colsName_tkks);
 					try {
-						ResultSet rs = dkks.getStatement().executeQuery("select TKDKKS.IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
+						ResultSet rs = dkks.getStatement().executeQuery("select IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
 						while(rs.next()) {
 							String rows[] = new String[5];
 							rows[0] = rs.getString("IDTK");
@@ -116,24 +119,25 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 					DefaultTableModel tm1 = new DefaultTableModel() {
 						@Override
 						public int getColumnCount() {
-							return 5;
+							return 6;
 						}
 						public boolean isCellEditable(int row, int col) {
 							return false;
 						}
 					};
 					inf.setModel(tm1);
-					String colsName[] = {"Số hiệu", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký"};
-					tm1.setColumnIdentifiers(colsName);
+					String colsName_tkkt[] = {"Số tờ khai", "Họ và tên", "Giới tính", "Ngày sinh", "Ngày mất", "Ngày đăng ký khai tử"};
+					tm1.setColumnIdentifiers(colsName_tkkt);
 					try {
-						ResultSet rs = dkks.getStatement().executeQuery("select TKDKKS.IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky from TKDKKS order by IDTK");
+						ResultSet rs = dkkt.getStatement().executeQuery("select IDTK, tenNDKT, gioitinhNDKT, ngaysinhNDKT, date(thoigianchet) as ngaymat, ngaydangky from TKDKKT order by IDTK");
 						while(rs.next()) {
-							String rows[] = new String[5];
+							String rows[] = new String[6];
 							rows[0] = rs.getString("IDTK");
-							rows[1] = rs.getString("tenNDKS");
-							rows[2] = rs.getString("ngaysinhNDKS");
-							rows[3] = rs.getString("gioitinhNDKS");
-							rows[4] = rs.getString("ngaydangky");
+							rows[1] = rs.getString("tenNDKT");
+							rows[2] = rs.getString("gioitinhNDKT");
+							rows[3] = rs.getString("ngaysinhNDKT");
+							rows[4] = rs.getString("ngaymat");
+							rows[5] = rs.getString("ngaydangky");
 							tm1.addRow(rows);
 						}
 					}
@@ -180,11 +184,16 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		switch(e.getActionCommand()) {
-		case "Sửa hồ sơ":
-			this.dkks.setData();
+		case "Sửa tờ khai":
+			if(list_reg.getSelectedIndex() == 0) this.dkks.setData();
+			else if(list_reg.getSelectedIndex() == 1) this.dkkt.setData();
 			break;
 		case "Thêm tờ khai":
-			this.dkks.addData();
+			if(list_reg.getSelectedIndex() == 0) this.dkks.addData();
+			else if(list_reg.getSelectedIndex() == 1) this.dkkt.addData();
+			break;
+		case "Xóa tờ khai":
+			
 			break;
 		}
 	}

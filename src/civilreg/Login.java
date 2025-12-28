@@ -3,10 +3,15 @@ import java.sql.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Calendar;
 
 public class Login extends JFrame implements ActionListener{
 	private String addr, usr, passwd;
 	private Connection conn;
+	private Calendar cal = Calendar.getInstance();
+	public Calendar getCal() {
+		return cal;
+	}
 	public Connection getConn() {
 		return conn;
 	}

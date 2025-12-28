@@ -5,10 +5,11 @@ import java.awt.event.*;
 import java.sql.*;
 
 public class GKS extends RegDataManipulator{
+	int regnum = 1;
 	private Statement st;
 	private String init = "create table GKS ("
 			+ "SoGKS varchar(10), "
-			+ "IDTK varchar(10), "
+			+ "IDTK int, "
 			+ "primary key (SoGKS), "
 			+ "foreign key (IDTK) references TKDKKS(IDTK))";
 	public GKS() {
