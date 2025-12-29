@@ -1,28 +1,38 @@
 package civilreg;
-import javax.swing.*;
-import java.sql.*;
 
-public class TKDKKH{
-	private int id = 0;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.sql.*;
+import java.util.Calendar;
+
+public class TKDKKH extends RegDataManipulator implements ActionListener{
 	private Statement st;
+	private PreparedStatement ps;
 	private String init = "create table TKDKKH ("
-			+ "IDTK varchar(10), "
-			+ "tenNu varchar(50), "
-			+ "ngaysinhNu datetime, "
-			+ "dantocNu varchar(20), "
-			+ "quoctichNu varchar(20), "
-			+ "noicutruNu varchar(255), "
-			+ "gtttNu varchar(50), "
-			+ "solanKHNu tinyint, "
-			+ "tenNam varchar(50), "
-			+ "ngaysinhNam datetime, "
-			+ "dantocNam varchar(20), "
-			+ "quoctichNam varchar(20), "
-			+ "noicutruNam varchar(255), "
-			+ "gtttNam varchar(50), "
-			+ "solanKHNam tinyint, "
-			+ "ngaydangky datetime, "
+			+ "IDTK int auto_increment, "
+			+ "tenNu varchar(50) not null, "
+			+ "ngaysinhNu date not null, "
+			+ "dantocNu varchar(20) not null, "
+			+ "quoctichNu varchar(20) not null, "
+			+ "noicutruNu varchar(255) not null, "
+			+ "gtttNu varchar(50) not null, "
+			+ "solanKHNu tinyint not null, "
+			+ "tenNam varchar(50) not null, "
+			+ "ngaysinhNam date not null, "
+			+ "dantocNam varchar(20) not null, "
+			+ "quoctichNam varchar(20) not null, "
+			+ "noicutruNam varchar(255) not null, "
+			+ "gtttNam varchar(50) not null, "
+			+ "solanKHNam tinyint not null, "
+			+ "ngaydangky date not null, "
+			+ "dncapBS int not null, "
+			+ "pheduyet boolean, "
 			+ "primary key (IDTK))";
+	JFrame edit_dialog;
+	JTextField num_inp, tenNu_inp, ngsinhNu_inp, dtNu_inp, qtNu_inp, nctNu_inp, gtttNu_inp, slKHNu_inp;
+	JTextField tenNam_inp, ngsinhNam_inp, dtNam_inp, qtNam_inp, nctNam_inp, gtttNam_inp, slKHNam_inp;
+	JTextField dncapBS_inp;
 	public TKDKKH() {
 		
 	}
@@ -34,11 +44,424 @@ public class TKDKKH{
 				st.executeUpdate(init);
 			}
 			catch(Exception e1) {
-				
+				e1.printStackTrace();
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public Statement getStatement() {
+		return st;
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		switch(e.getActionCommand()) {
+		case "Kiểm tra":
+			try {
+				st = Main.m.getL().getConn().createStatement();
+				ResultSet rs = st.executeQuery(
+						"select tenNu, ngaysinhNu, dantocNu, quoctichNu, noicutruNu, gtttNu, solanKHNu, "
+						+ "tenNam, ngaysinhNam, dantocNam, quoctichNam, noicutruNam, gtttNam, solanKHNam, "
+						+ "dncapBS from TKDKKH where IDTK = " + num_inp.getText());
+				rs.next();
+				tenNu_inp.setText(rs.getString("tenNu"));
+				ngsinhNu_inp.setText(rs.getString("ngaysinhNu"));
+				dtNu_inp.setText(rs.getString("dantocNu"));
+				qtNu_inp.setText(rs.getString("quoctichNu"));
+				nctNu_inp.setText(rs.getString("noicutruNu"));
+				gtttNu_inp.setText(rs.getString("gtttNu"));
+				slKHNu_inp.setText(rs.getString("solanKHNu"));
+				tenNam_inp.setText(rs.getString("tenNam"));
+				ngsinhNam_inp.setText(rs.getString("ngaysinhNam"));
+				dtNam_inp.setText(rs.getString("dantocNam"));
+				qtNam_inp.setText(rs.getString("quoctichNam"));
+				nctNam_inp.setText(rs.getString("noicutruNam"));
+				gtttNam_inp.setText(rs.getString("gtttNam"));
+				slKHNam_inp.setText(rs.getString("solanKHNam"));
+				dncapBS_inp.setText(rs.getString("dncapBS"));
+			}
+			catch(Exception e2) {
+				JFrame notFound = new JFrame();
+				JOptionPane nf = new JOptionPane();
+				nf.setVisible(true);
+				nf.showMessageDialog(notFound, "Không tìm thấy tờ khai số " + num_inp.getText() + " trong CSDL.", 
+						"Tìm kiếm thất bại", JOptionPane.ERROR_MESSAGE);
+			}
+			finally {
+				break;
+			}
+		case "OK":
+			if(edit_dialog.getTitle().equals("Sửa tờ khai")) {
+				try {
+					ps = Main.m.getL().getConn().prepareStatement(
+							"update TKDKKH set "
+							+ "tenNu = ?, ngaysinhNu = ?, dantocNu = ?, quoctichNu = ?, noicutruNu = ?, gtttNu = ?, solanKHNu = ?, "
+							+ "tenNam = ?, ngaysinhNam = ?, dantocNam = ?, quoctichNam = ?, noicutruNam = ?, gtttNam = ?, solanKHNam = ?, "
+							+ "dncapBS = ? where IDTK = " + num_inp.getText());
+					ps.setString(1, tenNu_inp.getText().toUpperCase());
+					ps.setString(2, ngsinhNu_inp.getText().strip().replaceAll("\\s+", ""));
+					ps.setString(3, dtNu_inp.getText());
+					ps.setString(4, qtNu_inp.getText());
+					ps.setString(5, nctNu_inp.getText());
+					ps.setString(6, gtttNu_inp.getText());
+					ps.setInt(7, Integer.valueOf(slKHNu_inp.getText()));
+					ps.setString(8, tenNam_inp.getText().toUpperCase());
+					ps.setString(9, ngsinhNam_inp.getText().strip().replaceAll("\\s+", ""));
+					ps.setString(10, dtNam_inp.getText());
+					ps.setString(11, qtNam_inp.getText());
+					ps.setString(12, nctNam_inp.getText());
+					ps.setString(13, gtttNam_inp.getText());
+					ps.setInt(14, Integer.valueOf(slKHNam_inp.getText()));
+					ps.setInt(15, Integer.valueOf(dncapBS_inp.getText()));
+					ps.executeUpdate();
+					
+					JFrame modified = new JFrame();
+					JOptionPane m = new JOptionPane();
+					m.setVisible(true);
+					m.showMessageDialog(modified, "Đã chỉnh sửa thành công tờ khai số " + num_inp.getText(), "Chỉnh sửa thành công", JOptionPane.INFORMATION_MESSAGE);
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					JFrame notModified = new JFrame();
+					JOptionPane nm = new JOptionPane();
+					nm.setVisible(true);
+					nm.showMessageDialog(notModified, "Không chỉnh sửa được tờ khai. Xin vui lòng kiểm tra lại dữ liệu đầu vào.\n"
+							+ "Lưu ý: thông tin về bên nam. bên nữ không được để trống.\n"
+							+ "Các trường thông tin ghi ngày nhập theo định dạng \"năm - tháng - ngày\".", 
+							"Lỗi chỉnh sửa", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					break;
+				}
+			}
+			else if(edit_dialog.getTitle().equals("Thêm tờ khai")) {
+				try {
+					ps = Main.m.getL().getConn().prepareStatement(
+							"insert into TKDKKH ("
+							+ "tenNu, ngaysinhNu, dantocNu, quoctichNu, noicutruNu, gtttNu, solanKHNu, "
+							+ "tenNam, ngaysinhNam, dantocNam, quoctichNam, noicutruNam, gtttNam, solanKHNam, "
+							+ "dncapBS, ngaydangky) "
+							+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					ps.setString(1, tenNu_inp.getText().toUpperCase());
+					ps.setString(2, ngsinhNu_inp.getText().strip().replaceAll("\\s+", ""));
+					ps.setString(3, dtNu_inp.getText());
+					ps.setString(4, qtNu_inp.getText());
+					ps.setString(5, nctNu_inp.getText());
+					ps.setString(6, gtttNu_inp.getText());
+					ps.setInt(7, Integer.valueOf(slKHNu_inp.getText()));
+					ps.setString(8, tenNam_inp.getText().toUpperCase());
+					ps.setString(9, ngsinhNam_inp.getText().strip().replaceAll("\\s+", ""));
+					ps.setString(10, dtNam_inp.getText());
+					ps.setString(11, qtNam_inp.getText());
+					ps.setString(12, nctNam_inp.getText());
+					ps.setString(13, gtttNam_inp.getText());
+					ps.setInt(14, Integer.valueOf(slKHNam_inp.getText()));
+					ps.setInt(15, Integer.valueOf(dncapBS_inp.getText()));
+					ps.setString(16, Main.m.getL().getCal().get(Calendar.YEAR) + "-" 
+							+ String.valueOf(Integer.valueOf(Main.m.getL().getCal().get(Calendar.MONTH)) + 1) 
+							+ "-" + Main.m.getL().getCal().get(Calendar.DATE));
+					ps.executeUpdate();
+					Statement ps1 = Main.m.getL().getConn().createStatement();
+					ResultSet rs1 = ps1.executeQuery("select IDTK from TKDKKH order by IDTK desc limit 1");
+					rs1.next();
+					
+					JFrame modified = new JFrame();
+					JOptionPane m = new JOptionPane();
+					m.setVisible(true);
+					m.showMessageDialog(modified, "Đã thêm thành công tờ khai số " + rs1.getString(1), "Chỉnh sửa thành công", JOptionPane.INFORMATION_MESSAGE);
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					JFrame notModified = new JFrame();
+					JOptionPane nm = new JOptionPane();
+					nm.setVisible(true);
+					nm.showMessageDialog(notModified, "Không thêm được tờ khai. Xin vui lòng kiểm tra lại dữ liệu đầu vào.\n"
+							+ "Lưu ý: thông tin về người đã chết không được để trống.\n"
+							+ "Các trường thông tin ghi ngày nhập theo định dạng \"năm - tháng - ngày\".", 
+							"Lỗi dữ liệu", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					break;
+				}
+			}
+			else if(edit_dialog.getTitle().equals("Xóa tờ khai")) {
+				try {
+					ps = Main.m.getL().getConn().prepareStatement("delete from TKDKKH where IDTK = ?");
+					ps.setString(1, num_inp.getText());
+					if(ps.executeUpdate() == 1) {
+						JFrame modified = new JFrame();
+						JOptionPane m = new JOptionPane();
+						m.setVisible(true);
+						m.showMessageDialog(modified, "Đã xóa thành công tờ khai số " + num_inp.getText() + ".", "Xóa thành công", JOptionPane.INFORMATION_MESSAGE);
+						num_inp.setText("");
+						edit_dialog.setVisible(false);
+					}
+					else {
+						JFrame notModified = new JFrame();
+						JOptionPane nm = new JOptionPane();
+						nm.setVisible(true);
+						nm.showMessageDialog(notModified, "Không có tờ khai số " + num_inp.getText() + " trong CSDL.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					}
+					
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					JFrame notModified = new JFrame();
+					JOptionPane nm = new JOptionPane();
+					nm.setVisible(true);
+					nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					break;
+				}
+			}
+		case "Hủy bỏ":
+			edit_dialog.setVisible(false);
+			break;
+		}
+	}
+	@Override
+	void addData() {
+		// TODO Auto-generated method stub
+		edit_dialog = new JFrame("Thêm tờ khai");
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 550));
+		edit_dialog.getContentPane().setLayout(new GridLayout(16, 3));
+		JLabel bn1 = new JLabel("Thông tin về bên nữ");
+		JLabel tenNu = new JLabel("Họ, chữ đệm và tên");
+		tenNu_inp = new JTextField();
+		JLabel ngsinhNu = new JLabel("Ngày sinh (yyyy-mm-dd)");
+		ngsinhNu_inp = new JTextField();
+		JLabel dtNu = new JLabel("Dân tộc");
+		dtNu_inp = new JTextField();
+		JLabel qtNu = new JLabel("Quốc tịch");
+		qtNu_inp = new JTextField();
+		JLabel nctNu = new JLabel("Nơi cư trú");
+		nctNu_inp = new JTextField();
+		JLabel gtttNu = new JLabel("Giấy tờ tùy thân");
+		gtttNu_inp = new JTextField();
+		JLabel slKHNu = new JLabel("Kết hôn lần thứ mấy");
+		slKHNu_inp = new JTextField();
+		JLabel bn2 = new JLabel("Thông tin về bên nam");
+		JLabel tenNam = new JLabel("Họ, chữ đệm và tên");
+		tenNam_inp = new JTextField();
+		JLabel ngsinhNam = new JLabel("Ngày sinh (yyyy-mm-dd)");
+		ngsinhNam_inp = new JTextField();
+		JLabel dtNam = new JLabel("Dân tộc");
+		dtNam_inp = new JTextField();
+		JLabel qtNam = new JLabel("Quốc tịch");
+		qtNam_inp = new JTextField();
+		JLabel nctNam = new JLabel("Nơi cư trú");
+		nctNam_inp = new JTextField();
+		JLabel gtttNam = new JLabel("Giấy tờ tùy thân");
+		gtttNam_inp = new JTextField();
+		JLabel slKHNam = new JLabel("Kết hôn lần thứ mấy");
+		slKHNam_inp = new JTextField();
+		JLabel dncapBS = new JLabel("Số bản sao đề nghị cấp");
+		dncapBS_inp = new JTextField();
+		
+		JButton accept = new JButton("OK");
+		JButton cancel = new JButton("Hủy bỏ");
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(accept);
+		buttons.add(cancel);
+		
+		edit_dialog.getContentPane().add(dncapBS);
+		edit_dialog.getContentPane().add(dncapBS_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(bn1);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(tenNu);
+		edit_dialog.getContentPane().add(ngsinhNu);
+		edit_dialog.getContentPane().add(dtNu);
+		edit_dialog.getContentPane().add(tenNu_inp);
+		edit_dialog.getContentPane().add(ngsinhNu_inp);
+		edit_dialog.getContentPane().add(dtNu_inp);
+		edit_dialog.getContentPane().add(qtNu);
+		edit_dialog.getContentPane().add(nctNu);
+		edit_dialog.getContentPane().add(gtttNu);
+		edit_dialog.getContentPane().add(qtNu_inp);
+		edit_dialog.getContentPane().add(nctNu_inp);
+		edit_dialog.getContentPane().add(gtttNu_inp);
+		edit_dialog.getContentPane().add(slKHNu);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(slKHNu_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(bn2);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(tenNam);
+		edit_dialog.getContentPane().add(ngsinhNam);
+		edit_dialog.getContentPane().add(dtNam);
+		edit_dialog.getContentPane().add(tenNam_inp);
+		edit_dialog.getContentPane().add(ngsinhNam_inp);
+		edit_dialog.getContentPane().add(dtNam_inp);
+		edit_dialog.getContentPane().add(qtNam);
+		edit_dialog.getContentPane().add(nctNam);
+		edit_dialog.getContentPane().add(gtttNam);
+		edit_dialog.getContentPane().add(qtNam_inp);
+		edit_dialog.getContentPane().add(nctNam_inp);
+		edit_dialog.getContentPane().add(gtttNam_inp);
+		edit_dialog.getContentPane().add(slKHNam);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(slKHNam_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(buttons);
+		edit_dialog.getContentPane().add(new JLabel());
+		
+		edit_dialog.setResizable(false);
+		edit_dialog.setVisible(true);
+		edit_dialog.pack();
+	}
+	@Override
+	void setData() {
+		// TODO Auto-generated method stub
+		edit_dialog = new JFrame("Sửa tờ khai");
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 550));
+		edit_dialog.getContentPane().setLayout(new GridLayout(17, 3));
+		JLabel num = new JLabel("Số");
+		num_inp = new JTextField();
+		JButton check = new JButton("Kiểm tra");
+		check.addActionListener(this);
+		JLabel bn1 = new JLabel("Thông tin về bên nữ");
+		JLabel tenNu = new JLabel("Họ, chữ đệm và tên");
+		tenNu_inp = new JTextField();
+		JLabel ngsinhNu = new JLabel("Ngày sinh (yyyy-mm-dd)");
+		ngsinhNu_inp = new JTextField();
+		JLabel dtNu = new JLabel("Dân tộc");
+		dtNu_inp = new JTextField();
+		JLabel qtNu = new JLabel("Quốc tịch");
+		qtNu_inp = new JTextField();
+		JLabel nctNu = new JLabel("Nơi cư trú");
+		nctNu_inp = new JTextField();
+		JLabel gtttNu = new JLabel("Giấy tờ tùy thân");
+		gtttNu_inp = new JTextField();
+		JLabel slKHNu = new JLabel("Kết hôn lần thứ mấy");
+		slKHNu_inp = new JTextField();
+		JLabel bn2 = new JLabel("Thông tin về bên nam");
+		JLabel tenNam = new JLabel("Họ, chữ đệm và tên");
+		tenNam_inp = new JTextField();
+		JLabel ngsinhNam = new JLabel("Ngày sinh (yyyy-mm-dd)");
+		ngsinhNam_inp = new JTextField();
+		JLabel dtNam = new JLabel("Dân tộc");
+		dtNam_inp = new JTextField();
+		JLabel qtNam = new JLabel("Quốc tịch");
+		qtNam_inp = new JTextField();
+		JLabel nctNam = new JLabel("Nơi cư trú");
+		nctNam_inp = new JTextField();
+		JLabel gtttNam = new JLabel("Giấy tờ tùy thân");
+		gtttNam_inp = new JTextField();
+		JLabel slKHNam = new JLabel("Kết hôn lần thứ mấy");
+		slKHNam_inp = new JTextField();
+		JLabel dncapBS = new JLabel("Số bản sao đề nghị cấp");
+		dncapBS_inp = new JTextField();
+		
+		JButton accept = new JButton("OK");
+		JButton cancel = new JButton("Hủy bỏ");
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(accept);
+		buttons.add(cancel);
+		
+		edit_dialog.getContentPane().add(num);
+		edit_dialog.getContentPane().add(num_inp);
+		edit_dialog.getContentPane().add(check);
+		edit_dialog.getContentPane().add(dncapBS);
+		edit_dialog.getContentPane().add(dncapBS_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(bn1);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(tenNu);
+		edit_dialog.getContentPane().add(ngsinhNu);
+		edit_dialog.getContentPane().add(dtNu);
+		edit_dialog.getContentPane().add(tenNu_inp);
+		edit_dialog.getContentPane().add(ngsinhNu_inp);
+		edit_dialog.getContentPane().add(dtNu_inp);
+		edit_dialog.getContentPane().add(qtNu);
+		edit_dialog.getContentPane().add(nctNu);
+		edit_dialog.getContentPane().add(gtttNu);
+		edit_dialog.getContentPane().add(qtNu_inp);
+		edit_dialog.getContentPane().add(nctNu_inp);
+		edit_dialog.getContentPane().add(gtttNu_inp);
+		edit_dialog.getContentPane().add(slKHNu);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(slKHNu_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(bn2);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(tenNam);
+		edit_dialog.getContentPane().add(ngsinhNam);
+		edit_dialog.getContentPane().add(dtNam);
+		edit_dialog.getContentPane().add(tenNam_inp);
+		edit_dialog.getContentPane().add(ngsinhNam_inp);
+		edit_dialog.getContentPane().add(dtNam_inp);
+		edit_dialog.getContentPane().add(qtNam);
+		edit_dialog.getContentPane().add(nctNam);
+		edit_dialog.getContentPane().add(gtttNam);
+		edit_dialog.getContentPane().add(qtNam_inp);
+		edit_dialog.getContentPane().add(nctNam_inp);
+		edit_dialog.getContentPane().add(gtttNam_inp);
+		edit_dialog.getContentPane().add(slKHNam);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(slKHNam_inp);
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(new JLabel());
+		edit_dialog.getContentPane().add(buttons);
+		edit_dialog.getContentPane().add(new JLabel());
+		
+		edit_dialog.setResizable(false);
+		edit_dialog.setVisible(true);
+		edit_dialog.pack();
+	}
+	@Override
+	void removeData() {
+		// TODO Auto-generated method stub
+		edit_dialog = new JFrame("Xóa tờ khai");
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(400, 60));
+		edit_dialog.getContentPane().setLayout(new BorderLayout());
+		
+		JLabel num = new JLabel("Nhập số hiệu của tờ khai cần xóa: ");
+		num_inp = new JTextField();
+		
+		JButton accept = new JButton("OK");
+		JButton cancel = new JButton("Hủy bỏ");
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		JPanel fields = new JPanel();
+		fields.setLayout(new GridLayout(1, 2));
+		fields.add(num);
+		fields.add(num_inp);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(accept);
+		buttons.add(cancel);
+		
+		edit_dialog.getContentPane().add(fields, BorderLayout.CENTER);
+		edit_dialog.getContentPane().add(buttons, BorderLayout.SOUTH);
+		edit_dialog.setResizable(false);
+		edit_dialog.setVisible(true);
+		edit_dialog.pack();
 	}
 }

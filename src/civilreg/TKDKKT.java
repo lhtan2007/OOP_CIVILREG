@@ -186,7 +186,9 @@ public class TKDKKT extends RegDataManipulator implements ActionListener{
 					ps.setString(17, soGBT_inp.getText());
 					ps.setString(18, ncGBT_inp.getText());
 					ps.setString(19, ngcapGBT_inp.getText());
-					ps.setString(20, num_inp.getText());
+					ps.setString(20, Main.m.getL().getCal().get(Calendar.YEAR) + "-" 
+							+ String.valueOf(Integer.valueOf(Main.m.getL().getCal().get(Calendar.MONTH)) + 1) 
+							+ "-" + Main.m.getL().getCal().get(Calendar.DATE));
 					ps.executeUpdate();
 					Statement ps1 = Main.m.getL().getConn().createStatement();
 					ResultSet rs1 = ps1.executeQuery("select IDTK from TKDKKT order by IDTK desc limit 1");
@@ -206,6 +208,37 @@ public class TKDKKT extends RegDataManipulator implements ActionListener{
 							+ "Lưu ý: thông tin về người đã chết không được để trống.\n"
 							+ "Các trường thông tin ghi ngày nhập theo định dạng \"năm - tháng - ngày\".", 
 							"Lỗi dữ liệu", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					break;
+				}
+			}
+			else if(edit_dialog.getTitle().equals("Xóa tờ khai")) {
+				try {
+					ps = Main.m.getL().getConn().prepareStatement("delete from TKDKKT where IDTK = ?");
+					ps.setString(1, num_inp.getText());
+					if(ps.executeUpdate() == 1) {
+						JFrame modified = new JFrame();
+						JOptionPane m = new JOptionPane();
+						m.setVisible(true);
+						m.showMessageDialog(modified, "Đã xóa thành công tờ khai số " + num_inp.getText() + ".", "Xóa thành công", JOptionPane.INFORMATION_MESSAGE);
+						num_inp.setText("");
+						edit_dialog.setVisible(false);
+					}
+					else {
+						JFrame notModified = new JFrame();
+						JOptionPane nm = new JOptionPane();
+						nm.setVisible(true);
+						nm.showMessageDialog(notModified, "Không có tờ khai số " + num_inp.getText() + " trong CSDL.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					}
+					
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					JFrame notModified = new JFrame();
+					JOptionPane nm = new JOptionPane();
+					nm.setVisible(true);
+					nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
 					break;
@@ -461,7 +494,33 @@ public class TKDKKT extends RegDataManipulator implements ActionListener{
 	@Override
 	void removeData() {
 		// TODO Auto-generated method stub
+		edit_dialog = new JFrame("Xóa tờ khai");
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(400, 60));
+		edit_dialog.getContentPane().setLayout(new BorderLayout());
 		
+		JLabel num = new JLabel("Nhập số hiệu của tờ khai cần xóa: ");
+		num_inp = new JTextField();
+		
+		JButton accept = new JButton("OK");
+		JButton cancel = new JButton("Hủy bỏ");
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		JPanel fields = new JPanel();
+		fields.setLayout(new GridLayout(1, 2));
+		fields.add(num);
+		fields.add(num_inp);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(accept);
+		buttons.add(cancel);
+		
+		edit_dialog.getContentPane().add(fields, BorderLayout.CENTER);
+		edit_dialog.getContentPane().add(buttons, BorderLayout.SOUTH);
+		edit_dialog.setResizable(false);
+		edit_dialog.setVisible(true);
+		edit_dialog.pack();
 	}
 	
 }

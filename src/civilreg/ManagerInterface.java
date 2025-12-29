@@ -20,6 +20,7 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	private GKS gks;
 	private TKDKKS dkks;
 	private TKDKKT dkkt;
+	private TKDKKH dkkh;
 	//private DefaultTableModel tm;
 	public ManagerInterface(String s) {
 		p1 = new JPanel();
@@ -56,6 +57,8 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		gks.init();
 		dkkt = new TKDKKT();
 		dkkt.init();
+		dkkh = new TKDKKH();
+		dkkh.init();
 		
 		t.setBackground(Color.LIGHT_GRAY);
 		
@@ -146,7 +149,34 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 					}
 					break;
 				case "Tờ khai đăng ký kết hôn":
-					
+					DefaultTableModel tm2 = new DefaultTableModel() {
+						@Override
+						public int getColumnCount() {
+							return 6;
+						}
+						public boolean isCellEditable(int row, int col) {
+							return false;
+						}
+					};
+					inf.setModel(tm2);
+					String colsName_tkkh[] = {"Số tờ khai", "Họ và tên bên nam", "Ngày sinh bên nam", "Họ và tên bên nữ", "Ngày sinh bên nữ", "Ngày đăng ký kết hôn"};
+					tm2.setColumnIdentifiers(colsName_tkkh);
+					try {
+						ResultSet rs = dkkh.getStatement().executeQuery("select IDTK, tenNam, ngaysinhNam, tenNu, ngaysinhNu, ngaydangky from TKDKKH order by IDTK");
+						while(rs.next()) {
+							String rows[] = new String[6];
+							rows[0] = rs.getString("IDTK");
+							rows[1] = rs.getString("tenNam");
+							rows[2] = rs.getString("ngaysinhNam");
+							rows[3] = rs.getString("tenNu");
+							rows[4] = rs.getString("ngaysinhNu");
+							rows[5] = rs.getString("ngaydangky");
+							tm2.addRow(rows);
+						}
+					}
+					catch(Exception ex) {
+						ex.printStackTrace();
+					}
 					break;
 				case "Tờ khai đề nghị cấp bản sao trích lục hộ tịch":
 					
@@ -187,13 +217,17 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		case "Sửa tờ khai":
 			if(list_reg.getSelectedIndex() == 0) this.dkks.setData();
 			else if(list_reg.getSelectedIndex() == 1) this.dkkt.setData();
+			else if(list_reg.getSelectedIndex() == 2) this.dkkh.setData();
 			break;
 		case "Thêm tờ khai":
 			if(list_reg.getSelectedIndex() == 0) this.dkks.addData();
 			else if(list_reg.getSelectedIndex() == 1) this.dkkt.addData();
+			else if(list_reg.getSelectedIndex() == 2) this.dkkh.addData();
 			break;
 		case "Xóa tờ khai":
-			
+			if(list_reg.getSelectedIndex() == 0) this.dkks.removeData();
+			else if(list_reg.getSelectedIndex() == 1) this.dkkt.removeData();
+			else if(list_reg.getSelectedIndex() == 2) this.dkkh.removeData();
 			break;
 		}
 	}
