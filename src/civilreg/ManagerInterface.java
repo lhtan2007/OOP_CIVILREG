@@ -9,7 +9,6 @@ import java.awt.event.*;
 public class ManagerInterface extends JFrame implements ActionListener, WindowListener {
 	private JPanel p1, p2, p3, p4, p5;
 	private JPanel bstat;
-	//private DefaultTreeModel t;
 	private JTable inf;
 	private JScrollPane scr;
 	private JButton b1, b2, b3;
@@ -21,7 +20,6 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	private TKDKKS dkks;
 	private TKDKKT dkkt;
 	private TKDKKH dkkh;
-	//private DefaultTableModel tm;
 	public ManagerInterface(String s) {
 		p1 = new JPanel();
 		p2 = new JPanel();
@@ -36,7 +34,6 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		b2.addActionListener(this);
 		b3.addActionListener(this);
 		tp = new JTabbedPane();
-		RegCategoryTree t = new RegCategoryTree();
 		l1 = new JLabel("Thống kê cơ bản:");
 		bstat = new JPanel();
 		cb = new JLabel("Khai sinh:");
@@ -53,14 +50,13 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		
 		dkks = new TKDKKS();
 		dkks.init();
-		gks = new GKS();
-		gks.init();
+		//gks = new GKS();
+		//gks.init();
 		dkkt = new TKDKKT();
 		dkkt.init();
 		dkkh = new TKDKKH();
 		dkkh.init();
 		
-		t.setBackground(Color.LIGHT_GRAY);
 		
 		bstat.setPreferredSize(new Dimension(p3.getWidth(), 75));
 		bstat.setLayout(new GridLayout(2, 4));
@@ -83,7 +79,6 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		list_reg.addItem("Tờ khai đăng ký khai sinh");
 		list_reg.addItem("Tờ khai đăng ký khai tử");
 		list_reg.addItem("Tờ khai đăng ký kết hôn");
-		list_reg.addItem("Tờ khai đề nghị cấp bản sao trích lục hộ tịch");
 		list_reg.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -198,8 +193,8 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		
 		tp.add(p4);
 		tp.add(p5);
-		tp.setTitleAt(0, "Danh sách");
-		tp.setTitleAt(1, "Thống kê");
+		tp.setTitleAt(0, "Danh sách tờ khai đăng ký hộ tịch");
+		tp.setTitleAt(1, "Danh sách các việc hộ tịch được đăng ký");
 		
 		
 		this.getContentPane().setPreferredSize(new Dimension(1280, 720));

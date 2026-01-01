@@ -5,7 +5,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 public class LoginUI extends JFrame implements ActionListener, WindowListener{
 	private JButton b1, b2;
-	private JTextField tf1, tf2, tf3;
+	private JTextField tf1, tf2;
+	private JPasswordField tf3;
 	private JLabel li, l0, l1, l2, l3;
 	private JPanel p0, p1, p2, p3;
 	private Login l;
@@ -93,8 +94,10 @@ public class LoginUI extends JFrame implements ActionListener, WindowListener{
 		// TODO Auto-generated method stub
 		switch(e.getActionCommand()) {
 		case "Đăng nhập":
-			l = new Login(tf1.getText(), tf2.getText(), tf3.getText());
-			l.test();
+			l = new Login(tf1.getText(), tf2.getText(), String.valueOf(tf3.getPassword()));
+			//l.test();
+			//l = new Login();
+			l.init();
 			l.signIn();
 			break;
 		case "Nhập lại":
