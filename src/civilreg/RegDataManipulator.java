@@ -8,4 +8,6 @@ public abstract class RegDataManipulator {
 	abstract void addData();
 	abstract void setData();
 	abstract void removeData();
+	abstract void approveData();
+	abstract void viewData();
 }

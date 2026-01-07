@@ -71,15 +71,15 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		try {
 			st = Main.m.getL().getConn().createStatement();
 			try {
-				System.out.println(init);
+				//System.out.println(init);
 				st.executeUpdate(init);
 			}
 			catch(Exception e1) {
-				e1.printStackTrace();
+				//e1.printStackTrace();
 			}
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	public Statement getStatement() {
@@ -429,6 +429,40 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		edit_dialog.pack();
 	}
 	@Override
+	void approveData() {
+		edit_dialog = new JFrame("Duyệt tờ khai");
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(500, 60));
+		edit_dialog.getContentPane().setLayout(new BorderLayout());
+		
+		JLabel num = new JLabel("Nhập số hiệu của tờ khai cần duyệt: ");
+		num_inp = new JTextField();
+		
+		JButton accept = new JButton("OK");
+		JButton cancel = new JButton("Hủy bỏ");
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		JPanel fields = new JPanel();
+		fields.setLayout(new GridLayout(1, 2));
+		fields.add(num);
+		fields.add(num_inp);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(accept);
+		buttons.add(cancel);
+		
+		edit_dialog.getContentPane().add(fields, BorderLayout.CENTER);
+		edit_dialog.getContentPane().add(buttons, BorderLayout.SOUTH);
+		edit_dialog.setResizable(false);
+		edit_dialog.setVisible(true);
+		edit_dialog.pack();
+	}
+	@Override
+	void viewData() {
+		
+	}
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		switch(e.getActionCommand()) {
@@ -525,6 +559,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 							"Lỗi chỉnh sửa", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
+					edit_dialog.setVisible(false);
 					break;
 				}
 			}
@@ -586,6 +621,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 							"Lỗi dữ liệu", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
+					edit_dialog.setVisible(false);
 					break;
 				}
 			}
@@ -617,6 +653,41 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 					nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
+					edit_dialog.setVisible(false);
+					break;
+				}
+			}
+			else if(edit_dialog.getTitle().equals("Duyệt tờ khai")) {
+				try {
+					ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set pheduyet = 1 where IDTK = ?");
+					ps.setString(1, num_inp.getText());
+					if(ps.executeUpdate() == 1) {
+						JFrame modified = new JFrame();
+						JOptionPane m = new JOptionPane();
+						m.setVisible(true);
+						m.showMessageDialog(modified, "Đã duyệt thành công tờ khai số " + num_inp.getText() + ".", "Duyệt thành công", JOptionPane.INFORMATION_MESSAGE);
+						Statement st = Main.m.getL().getConn().createStatement();
+						//System.out.println("insert into GKS (IDTK) values (" + num_inp.getText() + ")");
+						st.executeUpdate("insert into GKS (IDTK) values (" + num_inp.getText() + ")");
+						num_inp.setText("");
+						edit_dialog.setVisible(false);
+					}
+					else {
+						JFrame notModified = new JFrame();
+						JOptionPane nm = new JOptionPane();
+						nm.setVisible(true);
+						nm.showMessageDialog(notModified, "Không có tờ khai số " + num_inp.getText() + " trong CSDL.", "Duyệt hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				catch(Exception e2) {
+					e2.printStackTrace();
+					JFrame notModified = new JFrame();
+					JOptionPane nm = new JOptionPane();
+					nm.setVisible(true);
+					nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Duyệt hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					edit_dialog.setVisible(false);
 					break;
 				}
 			}

@@ -95,9 +95,7 @@ public class LoginUI extends JFrame implements ActionListener, WindowListener{
 		switch(e.getActionCommand()) {
 		case "Đăng nhập":
 			l = new Login(tf1.getText(), tf2.getText(), String.valueOf(tf3.getPassword()));
-			//l.test();
-			//l = new Login();
-			l.init();
+			l.test();
 			l.signIn();
 			break;
 		case "Nhập lại":

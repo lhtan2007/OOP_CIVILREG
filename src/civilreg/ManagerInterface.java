@@ -10,12 +10,12 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	private JPanel p1, p2, p3, p4, p5;
 	private JPanel bstat;
 	private JTable inf;
-	private JScrollPane scr;
-	private JButton b1, b2, b3;
+	private JScrollPane scr, scr1;
+	private JButton b1, b2, b3, b4, b1a, b2a;
 	private JTabbedPane tp;
 	private JLabel l1, cb, cd, cm, cc, ncb, ncd, ncm, ncc; 
-	private JPanel buttons;
-	private JComboBox list_reg;
+	private JPanel buttons, buttons1;
+	private JComboBox list_reg, list_reg1;
 	private GKS gks;
 	private TKDKKS dkks;
 	private TKDKKT dkkt;
@@ -28,46 +28,55 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		p5 = new JPanel();
 		inf = new JTable();
 		b1 = new JButton("Thêm tờ khai");
+		b1a = new JButton("Xem chi tiết");
 		b2 = new JButton("Sửa tờ khai");
+		b2a = new JButton("Xóa đăng ký");
 		b3 = new JButton("Xóa tờ khai");
+		b4 = new JButton("Duyệt tờ khai");
 		b1.addActionListener(this);
+		b1a.addActionListener(this);
 		b2.addActionListener(this);
+		b2a.addActionListener(this);
 		b3.addActionListener(this);
+		b4.addActionListener(this);
 		tp = new JTabbedPane();
-		l1 = new JLabel("Thống kê cơ bản:");
-		bstat = new JPanel();
-		cb = new JLabel("Khai sinh:");
-		cd = new JLabel("Khai tử:");
-		cm = new JLabel("Kết hôn:");
-		cc = new JLabel("Bản sao:");
-		ncb = new JLabel();
-		ncd = new JLabel();
-		ncm = new JLabel();
-		ncc = new JLabel();
+//		l1 = new JLabel("Thống kê cơ bản:");
+//		bstat = new JPanel();
+//		cb = new JLabel("Khai sinh:");
+//		cd = new JLabel("Khai tử:");
+//		cm = new JLabel("Kết hôn:");
+//		cc = new JLabel("Bản sao:");
+//		ncb = new JLabel();
+//		ncd = new JLabel();
+//		ncm = new JLabel();
+//		ncc = new JLabel();
 		scr = new JScrollPane();
+		scr1 = new JScrollPane();
 		buttons = new JPanel();
+		buttons1 = new JPanel();
 		list_reg = new JComboBox();
+		list_reg1 = new JComboBox();
 		
 		dkks = new TKDKKS();
 		dkks.init();
-		//gks = new GKS();
-		//gks.init();
 		dkkt = new TKDKKT();
 		dkkt.init();
 		dkkh = new TKDKKH();
 		dkkh.init();
+		gks = new GKS();
+		gks.init();
 		
 		
-		bstat.setPreferredSize(new Dimension(p3.getWidth(), 75));
-		bstat.setLayout(new GridLayout(2, 4));
-		bstat.add(cb);
-		bstat.add(ncb);
-		bstat.add(cd);
-		bstat.add(ncd);
-		bstat.add(cm);
-		bstat.add(ncm);
-		bstat.add(cc);
-		bstat.add(ncc);
+//		bstat.setPreferredSize(new Dimension(p3.getWidth(), 75));
+//		bstat.setLayout(new GridLayout(2, 4));
+//		bstat.add(cb);
+//		bstat.add(ncb);
+//		bstat.add(cd);
+//		bstat.add(ncd);
+//		bstat.add(cm);
+//		bstat.add(ncm);
+//		bstat.add(cc);
+//		bstat.add(ncc);
 		
 		
 		inf.setVisible(true);
@@ -75,6 +84,8 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 		inf.getTableHeader().setReorderingAllowed(false);
 		scr.setViewportView(inf);
 		scr.setVisible(true);
+		//scr1.setViewportView(inf);
+		scr1.setVisible(true);
 		
 		list_reg.addItem("Tờ khai đăng ký khai sinh");
 		list_reg.addItem("Tờ khai đăng ký khai tử");
@@ -173,32 +184,43 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 						ex.printStackTrace();
 					}
 					break;
-				case "Tờ khai đề nghị cấp bản sao trích lục hộ tịch":
-					
-					break;
 				}
 			}
 		});
 		
+		list_reg1.addItem("Sổ đăng ký khai sinh");
+		list_reg1.addItem("Sổ đăng ký khai tử");
+		list_reg1.addItem("Sổ đăng ký kết hôn");
+		
 		buttons.add(list_reg);
+		buttons1.add(list_reg1);
 		buttons.add(b1);
 		buttons.add(b2);
-		buttons.add(b3);
+		if(Main.m.getL().getRole().equals("admin")) {
+			buttons.add(b3);
+			buttons.add(b4);
+		}
+		buttons1.add(b1a);
+		buttons1.add(b2a);
 		
 		p4.setLayout(new BorderLayout());
 		p4.add(scr, BorderLayout.CENTER);
 		p4.add(buttons, BorderLayout.NORTH);
 		
-		//p5
+		p5.setLayout(new BorderLayout());
+		p5.add(scr1, BorderLayout.CENTER);
+		p5.add(buttons1, BorderLayout.NORTH);
 		
+		System.out.println(Main.m.getL().getRole());
 		tp.add(p4);
-		tp.add(p5);
 		tp.setTitleAt(0, "Danh sách tờ khai đăng ký hộ tịch");
-		tp.setTitleAt(1, "Danh sách các việc hộ tịch được đăng ký");
+		if(Main.m.getL().getRole().equals("admin")) {
+			tp.add(p5);
+			tp.setTitleAt(1, "Danh sách các việc hộ tịch được đăng ký");
+		}
 		
 		
 		this.getContentPane().setPreferredSize(new Dimension(1280, 720));
-		//this.getContentPane().add(p1, BorderLayout.WEST);
 		this.getContentPane().add(tp, BorderLayout.CENTER);
 		this.setTitle(s);
 		this.addWindowListener(this);
@@ -224,6 +246,15 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 			else if(list_reg.getSelectedIndex() == 1) this.dkkt.removeData();
 			else if(list_reg.getSelectedIndex() == 2) this.dkkh.removeData();
 			break;
+		case "Duyệt tờ khai":
+			if(list_reg.getSelectedIndex() == 0) this.dkks.approveData();
+			else if(list_reg.getSelectedIndex() == 1) this.dkkt.approveData();
+			else if(list_reg.getSelectedIndex() == 2) this.dkkh.approveData();
+			break;
+		case "Xem chi tiết":
+			
+			break;
+		case "Xóa đăng ký":
 		}
 	}
 

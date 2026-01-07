@@ -5,10 +5,9 @@ import java.awt.event.*;
 import java.sql.*;
 
 public class GKS extends RegDataManipulator{
-	int regnum = 1;
 	private Statement st;
 	private String init = "create table GKS ("
-			+ "SoGKS varchar(10), "
+			+ "SoGKS int auto_increment, "
 			+ "IDTK int, "
 			+ "primary key (SoGKS), "
 			+ "foreign key (IDTK) references TKDKKS(IDTK))";
@@ -45,6 +44,16 @@ public class GKS extends RegDataManipulator{
 	}
 	@Override
 	void addData() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	void approveData() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	void viewData() {
 		// TODO Auto-generated method stub
 		
 	}
