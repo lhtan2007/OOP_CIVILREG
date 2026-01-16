@@ -84,7 +84,7 @@ public class TKDKKH extends RegDataManipulator implements ActionListener, Compon
 					rs = st.executeQuery(
 							"select tenNu, ngaysinhNu, dantocNu, quoctichNu, noicutruNu, gtttNu, solanKHNu, "
 							+ "tenNam, ngaysinhNam, dantocNam, quoctichNam, noicutruNam, gtttNam, solanKHNam, "
-							+ "dncapBS from TKDKKH where IDTK = " + num_inp.getText() + " and nguoinhapTK = " + Main.m.getL().getUsername());
+							+ "dncapBS from TKDKKH where IDTK = " + num_inp.getText() + " and nguoinhapTK = \'" + Main.m.getL().getUsername() + "\'");
 				}
 				rs.next();
 				tenNu_inp.setText(rs.getString("tenNu"));
@@ -260,13 +260,15 @@ public class TKDKKH extends RegDataManipulator implements ActionListener, Compon
 			}
 			else if(edit_dialog.getTitle().equals("Duyệt tờ khai")) {
 				try {
-					ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set pheduyet = 1 where IDTK = ?");
+					ps = Main.m.getL().getConn().prepareStatement("update TKDKKH set pheduyet = 1 where IDTK = ?");
 					ps.setString(1, num_inp.getText());
 					if(ps.executeUpdate() == 1) {
 						JFrame modified = new JFrame();
 						JOptionPane m = new JOptionPane();
 						m.setVisible(true);
 						m.showMessageDialog(modified, "Đã duyệt thành công tờ khai số " + num_inp.getText() + ".", "Duyệt thành công", JOptionPane.INFORMATION_MESSAGE);
+						Statement st = Main.m.getL().getConn().createStatement();
+						st.executeUpdate("insert into GCNKH (IDTK) values (" + num_inp.getText() + ")");
 						num_inp.setText("");
 						edit_dialog.setVisible(false);
 					}
@@ -595,10 +597,17 @@ public class TKDKKH extends RegDataManipulator implements ActionListener, Compon
 	void displayTable(JTable inf, DefaultTableModel tm) {
 		tm = this.tm;
 		inf.setModel(tm);
+		tm.setRowCount(0);
 		String colsName_tkkh[] = {"Số tờ khai", "Họ và tên bên nam", "Ngày sinh bên nam", "Họ và tên bên nữ", "Ngày sinh bên nữ", "Ngày đăng ký kết hôn", "Trạng thái duyệt tờ khai"};
 		tm.setColumnIdentifiers(colsName_tkkh);
 		try {
-			ResultSet rs = st.executeQuery("select IDTK, tenNam, ngaysinhNam, tenNu, ngaysinhNu, ngaydangky, pheduyet from TKDKKH order by IDTK");
+			ResultSet rs = null;
+			if(Main.m.getL().getRole().equals("admin")) {
+				rs = st.executeQuery("select IDTK, tenNam, ngaysinhNam, tenNu, ngaysinhNu, ngaydangky, pheduyet from TKDKKH order by IDTK");
+			}
+			else {
+				rs = st.executeQuery("select IDTK, tenNam, ngaysinhNam, tenNu, ngaysinhNu, ngaydangky, pheduyet from TKDKKH where nguoinhapTK = \'" + Main.m.getL().getUsername() + "\' order by IDTK");
+			}
 			while(rs.next()) {
 				String rows[] = new String[7];
 				rows[0] = rs.getString("IDTK");

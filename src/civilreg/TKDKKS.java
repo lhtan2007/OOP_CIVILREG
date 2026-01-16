@@ -504,7 +504,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener, Compon
 							+ "tenNDKS, date(ngaysinhNDKS) as ngsinhNDKS, nsNDKSghibangchu, gioitinhNDKS, dantocNDKS, quoctichNDKS, noisinhNDKS, quequanNDKS, "
 							+ "tenM, date(ngaysinhM) as ngsinhM, dantocM, quoctichM, noicutruM, gtttM, "
 							+ "tenC, date(ngaysinhC) as ngsinhC, dantocC, quoctichC, noicutruC, gtttC, "
-							+ "dncapBS from TKDKKS where IDTK = " + this.num_inp.getText() + " and nguoinhapTK = " + Main.m.getL().getUsername());
+							+ "dncapBS from TKDKKS where IDTK = " + this.num_inp.getText() + " and nguoinhapTK = \'" + Main.m.getL().getUsername() + "\'");
 				}
 				rs.next();
 				tenNYC_inp.setText(rs.getString("tenNYC"));
@@ -553,12 +553,14 @@ public class TKDKKS extends RegDataManipulator implements ActionListener, Compon
 						ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set tenNDKS = ?, ngaysinhNDKS = ?, nsNDKSghibangchu = ?, gioitinhNDKS = ?, dantocNDKS = ?, quoctichNDKS = ?, "
 								+ "noisinhNDKS = ?, quequanNDKS = ?, tenM = ?, ngaysinhM = ?, dantocM = ?, quoctichM = ?, noicutruM = ?, gtttM = ?, "
 								+ "tenC = ?, ngaysinhC = ?, dantocC = ?, quoctichC = ?, noicutruC = ?, gtttC = ?, dncapBS = ? where IDTK = ?");
+						ps.setString(22, num_inp.getText());
 					}
 					else {
 						ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set tenNDKS = ?, ngaysinhNDKS = ?, nsNDKSghibangchu = ?, gioitinhNDKS = ?, dantocNDKS = ?, quoctichNDKS = ?, "
 								+ "noisinhNDKS = ?, quequanNDKS = ?, tenM = ?, ngaysinhM = ?, dantocM = ?, quoctichM = ?, noicutruM = ?, gtttM = ?, "
 								+ "tenC = ?, ngaysinhC = ?, dantocC = ?, quoctichC = ?, noicutruC = ?, gtttC = ?, dncapBS = ?, nguoinhapTK = ? where IDTK = ?");
-						ps.setString(23, Main.m.getL().getUsername());
+						ps.setString(22, Main.m.getL().getUsername());
+						ps.setString(23, num_inp.getText());
 					}
 					ps.setString(1, tenNDKS_inp.getText().toUpperCase());
 					ps.setString(2, ngsinhNDKS_inp.getText().strip().replaceAll("\\s+", ""));
@@ -582,7 +584,6 @@ public class TKDKKS extends RegDataManipulator implements ActionListener, Compon
 					ps.setString(19, nctC_inp.getText());
 					ps.setString(20, gtttC_inp.getText());
 					ps.setInt(21, Integer.valueOf(dncapBS_inp.getText()));
-					ps.setString(22, num_inp.getText());
 					ps.executeUpdate();
 					JFrame modified = new JFrame();
 					JOptionPane m = new JOptionPane();

@@ -40,7 +40,7 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 			+ "soGBT varchar(20) not null, "
 			+ "noicapGBT varchar(255) not null, "
 			+ "ngaycapGBT date not null, "
-			+ "ngaydangky datetime, "
+			+ "ngaydangky date, "
 			+ "dncapBS int not null, "
 			+ "pheduyet boolean default 0, "
 			+ "nguoinhapTK varchar(255) not null, "
@@ -95,7 +95,7 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 							+ "tenNDKT, date(ngaysinhNDKT) as ngsinhNDKT, gioitinhNDKT, dantocNDKT, quoctichNDKT, "
 							+ "noicutruNDKT, gtttNDKT, thoigianchet, noichet, nguyennhanchet, "
 							+ "soGBT, noicapGBT, ngaycapGBT "
-							+ "from TKDKKT where IDTK = " + this.num_inp.getText() + " and nguoinhapTK = " + Main.m.getL().getUsername());
+							+ "from TKDKKT where IDTK = " + this.num_inp.getText() + " and nguoinhapTK = \'" + Main.m.getL().getUsername() + "\'");
 				}
 				rs.next();
 				tenNYC_inp.setText(rs.getString("tenNYC"));
@@ -120,6 +120,7 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 				ngcapGBT_inp.setText(rs.getString("ngaycapGBT"));
 			}
 			catch(Exception e2) {
+				e2.printStackTrace();
 				JFrame notFound = new JFrame();
 				JOptionPane nf = new JOptionPane();
 				nf.setVisible(true);
@@ -139,6 +140,7 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 								+ "tenNDKT = ?, ngaysinhNDKT = ?, gioitinhNDKT = ?, dantocNDKT = ?, quoctichNDKT = ?, "
 								+ "noicutruNDKT = ?, gtttNDKT = ?, thoigianchet = ?, noichet = ?, nguyennhanchet = ?, "
 								+ "soGBT = ?, noicapGBT = ?, ngaycapGBT = ? where IDTK = ?");
+						ps.setString(20, num_inp.getText());
 					}
 					else {
 						ps = Main.m.getL().getConn().prepareStatement(
@@ -147,7 +149,8 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 								+ "tenNDKT = ?, ngaysinhNDKT = ?, gioitinhNDKT = ?, dantocNDKT = ?, quoctichNDKT = ?, "
 								+ "noicutruNDKT = ?, gtttNDKT = ?, thoigianchet = ?, noichet = ?, nguyennhanchet = ?, "
 								+ "soGBT = ?, noicapGBT = ?, ngaycapGBT = ?, nguoinhapTK = ? where IDTK = ?");
-						ps.setString(21, Main.m.getL().getUsername());
+						ps.setString(21, num_inp.getText());
+						ps.setString(20, Main.m.getL().getUsername());
 					}
 					ps.setString(1, tenNYC_inp.getText().toUpperCase());
 					ps.setString(2, ngsinhNYC_inp.getText().strip().replaceAll("\\s+", ""));
@@ -169,7 +172,6 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 					ps.setString(17, soGBT_inp.getText());
 					ps.setString(18, ncGBT_inp.getText());
 					ps.setString(19, ngcapGBT_inp.getText());
-					ps.setString(20, num_inp.getText());
 					ps.executeUpdate();
 					
 					JFrame modified = new JFrame();
@@ -296,6 +298,8 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 						JOptionPane m = new JOptionPane();
 						m.setVisible(true);
 						m.showMessageDialog(modified, "Đã duyệt thành công tờ khai số " + num_inp.getText() + ".", "Duyệt thành công", JOptionPane.INFORMATION_MESSAGE);
+						Statement st = Main.m.getL().getConn().createStatement();
+						st.executeUpdate("insert into TLKT (IDTK) values (" + num_inp.getText() + ")");
 						num_inp.setText("");
 						edit_dialog.setVisible(false);
 					}
@@ -655,15 +659,16 @@ public class TKDKKT extends RegDataManipulator implements ActionListener, Compon
 	void displayTable(JTable inf, DefaultTableModel tm) {
 		tm = this.tm;
 		inf.setModel(tm);
+		tm.setRowCount(0);
 		String colsName_tkkt[] = {"Số tờ khai", "Họ và tên", "Giới tính", "Ngày sinh", "Ngày mất", "Ngày đăng ký khai tử", "Trạng thái duyệt tờ khai"};
 		tm.setColumnIdentifiers(colsName_tkkt);
 		try {
 			ResultSet rs = null;
 			if(Main.m.getL().getRole().equals("admin")) {
-				rs = st.executeQuery("select IDTK, tenNDKT, gioitinhNDKT, ngaysinhNDKT, date(thoigianchet) as ngaymat, ngaydangky from TKDKKT order by IDTK");
+				rs = st.executeQuery("select IDTK, tenNDKT, gioitinhNDKT, ngaysinhNDKT, date(thoigianchet) as ngaymat, ngaydangky, pheduyet from TKDKKT order by IDTK");
 			}
 			else {
-				rs = st.executeQuery("select IDTK, tenNDKT, gioitinhNDKT, ngaysinhNDKT, date(thoigianchet) as ngaymat, ngaydangky from TKDKKT where nguoinhapTK = \'" + Main.m.getL().getUsername() + "\' order by IDTK");
+				rs = st.executeQuery("select IDTK, tenNDKT, gioitinhNDKT, ngaysinhNDKT, date(thoigianchet) as ngaymat, ngaydangky, pheduyet from TKDKKT where nguoinhapTK = \'" + Main.m.getL().getUsername() + "\' order by IDTK");
 			}
 			while(rs.next()) {
 				String rows[] = new String[7];
