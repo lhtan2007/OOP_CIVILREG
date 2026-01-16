@@ -88,6 +88,7 @@ public class LoginUI extends JFrame implements ActionListener, WindowListener{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

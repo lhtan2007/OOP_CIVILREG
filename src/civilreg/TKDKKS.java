@@ -1,14 +1,26 @@
 package civilreg;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.sql.*;
 import java.util.Calendar;
 
-public class TKDKKS extends RegDataManipulator implements ActionListener{
+public class TKDKKS extends RegDataManipulator implements ActionListener, ComponentListener{
 	private Statement st;
 	private PreparedStatement ps;
+	private DefaultTableModel tm = new DefaultTableModel() {
+		@Override
+		public int getColumnCount() {
+			return 6;
+		}
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+	};
 	private String init = "create table TKDKKS ("
 			+ "IDTK int auto_increment, "
 			+ "tenNYC varchar(50) not null, "
@@ -17,7 +29,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 			+ "gtttNYC varchar(50) not null, "
 			+ "qhvoiNDKS varchar(20) not null, "
 			+ "tenNDKS varchar(50) not null, "
-			+ "ngaysinhNDKS datetime not null, "
+			+ "ngaysinhNDKS date not null, "
 			+ "nsNDKSghibangchu varchar(255) not null, "
 			+ "gioitinhNDKS boolean not null, "
 			+ "dantocNDKS varchar(20) not null, "
@@ -38,7 +50,8 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 			+ "gtttC varchar(50), "
 			+ "ngaydangky date, "
 			+ "dncapBS int, "
-			+ "pheduyet boolean, "
+			+ "pheduyet boolean default 0, "
+			+ "nguoinhapTK varchar(255) not null, "
 			+ "primary key (IDTK))";
 	JFrame edit_dialog;
 	JTextField tenNYC_inp, ngsinhNYC_inp, nctNYC_inp, gtttNYC_inp, qhvoiNDKS_inp, dncapBS_inp;
@@ -67,6 +80,9 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 	public TKDKKS() {
 		
 	}
+	public DefaultTableModel getTM() {
+		return tm;
+	}
 	public void init() {
 		try {
 			st = Main.m.getL().getConn().createStatement();
@@ -89,7 +105,8 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 	void addData() {
 		// TODO Auto-generated method stub
 		edit_dialog = new JFrame("Thêm tờ khai");
-		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 750));
+		edit_dialog.addComponentListener(this);
+		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 720));
 		edit_dialog.getContentPane().setLayout(new GridLayout(25, 3));
 		JLabel nyc = new JLabel("Thông tin về người yêu cầu");
 		JLabel tenNYC = new JLabel("Họ, chữ đệm và tên");
@@ -149,7 +166,6 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		nctC_inp = new JTextField();
 		JLabel gtttC = new JLabel("Giấy tờ tùy thân");
 		gtttC_inp = new JTextField();
-		
 		
 		JButton accept = new JButton("OK");
 		JButton cancel = new JButton("Hủy bỏ");
@@ -234,11 +250,13 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		edit_dialog.setResizable(false);
 		edit_dialog.setVisible(true);
 		edit_dialog.pack();
+		edit_dialog.setLocationRelativeTo(null);
 	}
 	@Override
 	void setData() {
 		// TODO Auto-generated method stub
 		edit_dialog = new JFrame("Sửa tờ khai");
+		edit_dialog.addComponentListener(this);
 		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 750));
 		edit_dialog.getContentPane().setLayout(new GridLayout(25, 3));
 		JLabel num = new JLabel("Số");
@@ -395,12 +413,13 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		edit_dialog.setResizable(false);
 		edit_dialog.setVisible(true);
 		edit_dialog.pack();
-		
+		edit_dialog.setLocationRelativeTo(null);
 	}
 	@Override
 	void removeData() {
 		// TODO Auto-generated method stub
 		edit_dialog = new JFrame("Xóa tờ khai");
+		edit_dialog.addComponentListener(this);
 		edit_dialog.getContentPane().setPreferredSize(new Dimension(400, 60));
 		edit_dialog.getContentPane().setLayout(new BorderLayout());
 		
@@ -427,10 +446,12 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		edit_dialog.setResizable(false);
 		edit_dialog.setVisible(true);
 		edit_dialog.pack();
+		edit_dialog.setLocationRelativeTo(null);
 	}
 	@Override
 	void approveData() {
 		edit_dialog = new JFrame("Duyệt tờ khai");
+		edit_dialog.addComponentListener(this);
 		edit_dialog.getContentPane().setPreferredSize(new Dimension(500, 60));
 		edit_dialog.getContentPane().setLayout(new BorderLayout());
 		
@@ -457,6 +478,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		edit_dialog.setResizable(false);
 		edit_dialog.setVisible(true);
 		edit_dialog.pack();
+		edit_dialog.setLocationRelativeTo(null);
 	}
 	@Override
 	void viewData() {
@@ -469,11 +491,21 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		case "Kiểm tra":
 			try {
 				st = Main.m.getL().getConn().createStatement();
-				ResultSet rs = st.executeQuery("select tenNYC, ngaysinhNYC, noicutruNYC, gtttNYC, qhvoiNDKS, "
-						+ "tenNDKS, date(ngaysinhNDKS) as ngsinhNDKS, nsNDKSghibangchu, gioitinhNDKS, dantocNDKS, quoctichNDKS, noisinhNDKS, quequanNDKS, "
-						+ "tenM, date(ngaysinhM) as ngsinhM, dantocM, quoctichM, noicutruM, gtttM, "
-						+ "tenC, date(ngaysinhC) as ngsinhC, dantocC, quoctichC, noicutruC, gtttC, "
-						+ "dncapBS from TKDKKS where IDTK = " + this.num_inp.getText());
+				ResultSet rs;
+				if(Main.m.getL().getRole().equals("admin")) {
+					rs = st.executeQuery("select tenNYC, ngaysinhNYC, noicutruNYC, gtttNYC, qhvoiNDKS, "
+							+ "tenNDKS, date(ngaysinhNDKS) as ngsinhNDKS, nsNDKSghibangchu, gioitinhNDKS, dantocNDKS, quoctichNDKS, noisinhNDKS, quequanNDKS, "
+							+ "tenM, date(ngaysinhM) as ngsinhM, dantocM, quoctichM, noicutruM, gtttM, "
+							+ "tenC, date(ngaysinhC) as ngsinhC, dantocC, quoctichC, noicutruC, gtttC, "
+							+ "dncapBS from TKDKKS where IDTK = " + this.num_inp.getText());
+				}
+				else {
+					rs = st.executeQuery("select tenNYC, ngaysinhNYC, noicutruNYC, gtttNYC, qhvoiNDKS, "
+							+ "tenNDKS, date(ngaysinhNDKS) as ngsinhNDKS, nsNDKSghibangchu, gioitinhNDKS, dantocNDKS, quoctichNDKS, noisinhNDKS, quequanNDKS, "
+							+ "tenM, date(ngaysinhM) as ngsinhM, dantocM, quoctichM, noicutruM, gtttM, "
+							+ "tenC, date(ngaysinhC) as ngsinhC, dantocC, quoctichC, noicutruC, gtttC, "
+							+ "dncapBS from TKDKKS where IDTK = " + this.num_inp.getText() + " and nguoinhapTK = " + Main.m.getL().getUsername());
+				}
 				rs.next();
 				tenNYC_inp.setText(rs.getString("tenNYC"));
 				ngsinhNYC_inp.setText(rs.getString("ngaysinhNYC"));
@@ -517,9 +549,17 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 		case "OK":
 			if(edit_dialog.getTitle().equals("Sửa tờ khai")) {
 				try {
-					ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set tenNDKS = ?, ngaysinhNDKS = ?, nsNDKSghibangchu = ?, gioitinhNDKS = ?, dantocNDKS = ?, quoctichNDKS = ?, "
-							+ "noisinhNDKS = ?, quequanNDKS = ?, tenM = ?, ngaysinhM = ?, dantocM = ?, quoctichM = ?, noicutruM = ?, gtttM = ?, "
-							+ "tenC = ?, ngaysinhC = ?, dantocC = ?, quoctichC = ?, noicutruC = ?, gtttC = ?, dncapBS = ? where IDTK = ?");
+					if(Main.m.getL().getRole().equals("admin")) {
+						ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set tenNDKS = ?, ngaysinhNDKS = ?, nsNDKSghibangchu = ?, gioitinhNDKS = ?, dantocNDKS = ?, quoctichNDKS = ?, "
+								+ "noisinhNDKS = ?, quequanNDKS = ?, tenM = ?, ngaysinhM = ?, dantocM = ?, quoctichM = ?, noicutruM = ?, gtttM = ?, "
+								+ "tenC = ?, ngaysinhC = ?, dantocC = ?, quoctichC = ?, noicutruC = ?, gtttC = ?, dncapBS = ? where IDTK = ?");
+					}
+					else {
+						ps = Main.m.getL().getConn().prepareStatement("update TKDKKS set tenNDKS = ?, ngaysinhNDKS = ?, nsNDKSghibangchu = ?, gioitinhNDKS = ?, dantocNDKS = ?, quoctichNDKS = ?, "
+								+ "noisinhNDKS = ?, quequanNDKS = ?, tenM = ?, ngaysinhM = ?, dantocM = ?, quoctichM = ?, noicutruM = ?, gtttM = ?, "
+								+ "tenC = ?, ngaysinhC = ?, dantocC = ?, quoctichC = ?, noicutruC = ?, gtttC = ?, dncapBS = ?, nguoinhapTK = ? where IDTK = ?");
+						ps.setString(23, Main.m.getL().getUsername());
+					}
 					ps.setString(1, tenNDKS_inp.getText().toUpperCase());
 					ps.setString(2, ngsinhNDKS_inp.getText().strip().replaceAll("\\s+", ""));
 					ps.setString(3, nsNDKSgbc_inp.getText());
@@ -568,8 +608,8 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 				try {
 					ps = Main.m.getL().getConn().prepareStatement("insert into TKDKKS (tenNDKS, ngaysinhNDKS, nsNDKSghibangchu, gioitinhNDKS, dantocNDKS, quoctichNDKS, "
 							+ "noisinhNDKS, quequanNDKS, tenM, ngaysinhM, dantocM, quoctichM, noicutruM, gtttM, "
-							+ "tenC, ngaysinhC, dantocC, quoctichC, noicutruC, gtttC, tenNYC, ngaysinhNYC, gtttNYC, noicutruNYC, qhvoiNDKS, dncapBS, ngaydangky) "
-							+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" );
+							+ "tenC, ngaysinhC, dantocC, quoctichC, noicutruC, gtttC, tenNYC, ngaysinhNYC, gtttNYC, noicutruNYC, qhvoiNDKS, dncapBS, ngaydangky, nguoinhapTK) "
+							+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" );
 					ps.setString(1, tenNDKS_inp.getText().toUpperCase());
 					ps.setString(2, ngsinhNDKS_inp.getText().strip().replaceAll("\\s+", ""));
 					ps.setString(3, nsNDKSgbc_inp.getText());
@@ -600,6 +640,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 					ps.setString(27, Main.m.getL().getCal().get(Calendar.YEAR) + "-" 
 							+ String.valueOf(Integer.valueOf(Main.m.getL().getCal().get(Calendar.MONTH)) + 1) 
 							+ "-" + Main.m.getL().getCal().get(Calendar.DATE));
+					ps.setString(28, Main.m.getL().getUsername());
 					ps.executeUpdate();
 					Statement ps1 = Main.m.getL().getConn().createStatement();
 					ResultSet rs1 = ps1.executeQuery("select IDTK from TKDKKS order by IDTK desc limit 1");
@@ -627,7 +668,8 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 			}
 			else if(edit_dialog.getTitle().equals("Xóa tờ khai")) {
 				try {
-					ps = Main.m.getL().getConn().prepareStatement("delete from TKDKKS where IDTK = ?");
+					if(Main.m.getL().getRole().equals("admin")) ps = Main.m.getL().getConn().prepareStatement("delete from TKDKKS where IDTK = ?");
+					else ps = Main.m.getL().getConn().prepareStatement("delete from TKDKKS where IDTK = ? and nguoinhapTK = " + Main.m.getL().getUsername());
 					ps.setString(1, num_inp.getText());
 					if(ps.executeUpdate() == 1) {
 						JFrame modified = new JFrame();
@@ -650,7 +692,12 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 					JFrame notModified = new JFrame();
 					JOptionPane nm = new JOptionPane();
 					nm.setVisible(true);
-					nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					if(e2.getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
+						nm.showMessageDialog(notModified, "Giấy tờ hộ tịch tương ứng phải được xóa đăng ký trước khi xóa tờ khai này.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+						nm.showMessageDialog(notModified, "Dữ liệu nhập vào không hợp lệ.", "Xóa hồ sơ thất bại", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				finally {
 					edit_dialog.setVisible(false);
@@ -691,10 +738,76 @@ public class TKDKKS extends RegDataManipulator implements ActionListener{
 					break;
 				}
 			}
-			
+			//Main.m.getL().mi.getTM().setRowCount(0);
 		case "Hủy bỏ":
 			edit_dialog.setVisible(false);
 			break;
 		}	
+	}
+	@Override
+	int countData() {
+		int cnt = 0;
+		try {
+			ResultSet rs = st.executeQuery("select count(IDTK) from TKDKKS");
+			if(rs.next()) cnt = rs.getInt(1);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return cnt;
+	}
+	@Override
+	void displayTable(JTable inf, DefaultTableModel tm) {
+		// TODO Auto-generated method stub
+		tm = this.tm;
+		inf.setModel(tm);
+		tm.setRowCount(0);
+		String colsName_tkks[] = {"Số tờ khai", "Họ và tên", "Ngày sinh", "Giới tính", "Ngày đăng ký khai sinh", "Trạng thái duyệt tờ khai"};
+		tm.setColumnIdentifiers(colsName_tkks);
+		try {
+			ResultSet rs = null;
+			if(Main.m.getL().getRole().equals("admin")) {
+				rs = st.executeQuery("select IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky, pheduyet from TKDKKS order by IDTK");
+			}
+			else {
+				rs = st.executeQuery("select IDTK, tenNDKS, ngaysinhNDKS, gioitinhNDKS, ngaydangky, pheduyet from TKDKKS where nguoinhapTK = \'" + Main.m.getL().getUsername() + "\' order by IDTK");
+			}
+			while(rs.next()) {
+				String rows[] = new String[6];
+				rows[0] = rs.getString("IDTK");
+				rows[1] = rs.getString("tenNDKS");
+				rows[2] = rs.getString("ngaysinhNDKS");
+				if(rs.getString("gioitinhNDKS").equals("0")) rows[3] = "Nam";
+				else rows[3] = "Nữ";
+				rows[4] = rs.getString("ngaydangky");
+				if(rs.getString("pheduyet").equals("1")) rows[5] = "Đã duyệt";
+				else rows[5] = "Chưa duyệt";
+				tm.addRow(rows);
+			}
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		tm.setRowCount(0);
+		this.displayTable(Main.m.getL().mi.getTable(), tm);
 	}
 }
