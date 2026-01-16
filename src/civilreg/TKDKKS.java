@@ -107,7 +107,7 @@ public class TKDKKS extends RegDataManipulator implements ActionListener, Compon
 		edit_dialog = new JFrame("Thêm tờ khai");
 		edit_dialog.addComponentListener(this);
 		edit_dialog.getContentPane().setPreferredSize(new Dimension(1200, 720));
-		edit_dialog.getContentPane().setLayout(new GridLayout(25, 3));
+		edit_dialog.getContentPane().setLayout(new GridLayout(24, 3));
 		JLabel nyc = new JLabel("Thông tin về người yêu cầu");
 		JLabel tenNYC = new JLabel("Họ, chữ đệm và tên");
 		tenNYC_inp = new JTextField();

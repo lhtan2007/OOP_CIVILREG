@@ -352,7 +352,8 @@ public class TLKT extends RegDataManipulator implements ActionListener, Componen
 				String rows[] = new String[6];
 				rows[0] = rs.getString("SoTLKT");
 				rows[1] = rs.getString("tenNDKT");
-				rows[2] = rs.getString("gioitinhNDKT");
+				if(rs.getString("gioitinhNDKT").equals("0")) rows[2] = "Nam";
+				else rows[2] = "Nữ";
 				rows[3] = rs.getString("ngaysinhNDKT");
 				rows[4] = rs.getString("ngaymat");
 				rows[5] = rs.getString("ngaydangky");

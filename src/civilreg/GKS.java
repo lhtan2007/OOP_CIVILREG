@@ -422,7 +422,8 @@ public class GKS extends RegDataManipulator implements ActionListener, Component
 				rows[0] = rs.getString("SoGKS");
 				rows[1] = rs.getString("tenNDKS");
 				rows[2] = rs.getString("ngaysinhNDKS");
-				rows[3] = rs.getString("gioitinhNDKS");
+				if(rs.getString("gioitinhNDKS").equals("0")) rows[3] = "Nam";
+				else rows[3] = "Nữ";
 				rows[4] = rs.getString("ngaydangky");
 				tm.addRow(rows);
 			}
