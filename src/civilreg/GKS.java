@@ -363,11 +363,13 @@ public class GKS extends RegDataManipulator implements ActionListener, Component
 				try {
 					ps = Main.m.getL().getConn().prepareStatement("delete from GKS where SoGKS = ?");
 					ps.setString(1, num_inp.getText());
-					if(ps.executeUpdate() == 1) {
+					ResultSet rs = st.executeQuery("select IDTK from GKS where SoGKS = " + num_inp.getText());
+					if(ps.executeUpdate() == 1 && rs.next() == true) {
 						JFrame modified = new JFrame();
 						JOptionPane m = new JOptionPane();
 						m.setVisible(true);
 						m.showMessageDialog(modified, "Đã xóa thành công giấy khai sinh số " + num_inp.getText() + ".", "Xóa thành công", JOptionPane.INFORMATION_MESSAGE);
+						st.executeUpdate("update TKDKKS set pheduyet = 0 where IDTK = " + rs.getString("IDTK"));
 						num_inp.setText("");
 						edit_dialog.setVisible(false);
 					}
