@@ -62,7 +62,7 @@ public class GCNKH extends RegDataManipulator implements ActionListener, Compone
 		edit_dialog.getContentPane().setPreferredSize(new Dimension(500, 60));
 		edit_dialog.getContentPane().setLayout(new BorderLayout());
 		
-		JLabel num = new JLabel("Nhập số hiệu của giấy chứng nhận kết hôn cần xóa: ");
+		JLabel num = new JLabel("Nhập số hiệu của GCN kết hôn cần xóa: ");
 		num_inp = new JTextField();
 		
 		JButton accept = new JButton("OK");
@@ -264,15 +264,17 @@ public class GCNKH extends RegDataManipulator implements ActionListener, Compone
 				edit_dialog.setVisible(false);
 				break;
 			}
-			else if(edit_dialog.getTitle().equals("Xóa tờ khai")) {
+			else if(edit_dialog.getTitle().equals("Xóa giấy chứng nhận kết hôn")) {
 				try {
 					ps = Main.m.getL().getConn().prepareStatement("delete from GCNKH where SoGCNKH = ?");
 					ps.setString(1, num_inp.getText());
-					if(ps.executeUpdate() == 1) {
+					ResultSet rs = st.executeQuery("select IDTK from GCNKH where SoGCNKH = " + num_inp.getText());
+					if(ps.executeUpdate() == 1 && rs.next() == true) {
 						JFrame modified = new JFrame();
 						JOptionPane m = new JOptionPane();
 						m.setVisible(true);
 						m.showMessageDialog(modified, "Đã xóa thành công giấy chứng nhận kết hôn số " + num_inp.getText() + ".", "Xóa thành công", JOptionPane.INFORMATION_MESSAGE);
+						st.executeUpdate("update TKDKKH set pheduyet = 0 where IDTK = " + rs.getString("IDTK"));
 						num_inp.setText("");
 						edit_dialog.setVisible(false);
 					}

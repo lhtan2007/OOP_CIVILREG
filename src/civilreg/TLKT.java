@@ -294,11 +294,13 @@ public class TLKT extends RegDataManipulator implements ActionListener, Componen
 				try {
 					ps = Main.m.getL().getConn().prepareStatement("delete from TLKT where SoTLKT = ?");
 					ps.setString(1, num_inp.getText());
-					if(ps.executeUpdate() == 1) {
+					ResultSet rs = st.executeQuery("select IDTK from TLKT where SoTLKT = " + num_inp.getText());
+					if(ps.executeUpdate() == 1 && rs.next() == true) {
 						JFrame modified = new JFrame();
 						JOptionPane m = new JOptionPane();
 						m.setVisible(true);
 						m.showMessageDialog(modified, "Đã xóa thành công trích lục khai tử số " + num_inp.getText() + ".", "Xóa thành công", JOptionPane.INFORMATION_MESSAGE);
+						st.executeUpdate("update TKDKKT set pheduyet = 0 where IDTK = " + rs.getString("IDTK"));
 						num_inp.setText("");
 						edit_dialog.setVisible(false);
 					}

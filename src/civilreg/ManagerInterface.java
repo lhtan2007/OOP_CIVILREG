@@ -317,14 +317,29 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 				case 0:
 					this.dkks.displayTable(inf, tm);
 					ncb.setText(String.valueOf(dkks.countData()));
+					ncd.setText(String.valueOf(dkkt.countData()));
+					ncm.setText(String.valueOf(dkkh.countData()));
+					ncb1.setText(String.valueOf(gks.countData()));
+					ncd1.setText(String.valueOf(tlkt.countData()));
+					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				case 1:
 					this.dkkt.displayTable(inf, tm);
+					ncb.setText(String.valueOf(dkks.countData()));
 					ncd.setText(String.valueOf(dkkt.countData()));
+					ncm.setText(String.valueOf(dkkh.countData()));
+					ncb1.setText(String.valueOf(gks.countData()));
+					ncd1.setText(String.valueOf(tlkt.countData()));
+					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				case 2:
 					this.dkkh.displayTable(inf, tm);
+					ncb.setText(String.valueOf(dkks.countData()));
+					ncd.setText(String.valueOf(dkkt.countData()));
 					ncm.setText(String.valueOf(dkkh.countData()));
+					ncb1.setText(String.valueOf(gks.countData()));
+					ncd1.setText(String.valueOf(tlkt.countData()));
+					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				}
 			}
@@ -332,14 +347,29 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 				switch (list_reg1.getSelectedIndex()) {
 				case 0:
 					this.gks.displayTable(inf1, tm);
+					ncb.setText(String.valueOf(dkks.countData()));
+					ncd.setText(String.valueOf(dkkt.countData()));
+					ncm.setText(String.valueOf(dkkh.countData()));
 					ncb1.setText(String.valueOf(gks.countData()));
+					ncd1.setText(String.valueOf(tlkt.countData()));
+					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				case 1:
 					this.tlkt.displayTable(inf1, tm);
+					ncb.setText(String.valueOf(dkks.countData()));
+					ncd.setText(String.valueOf(dkkt.countData()));
+					ncm.setText(String.valueOf(dkkh.countData()));
+					ncb1.setText(String.valueOf(gks.countData()));
 					ncd1.setText(String.valueOf(tlkt.countData()));
+					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				case 2:
 					this.gcnkh.displayTable(inf1, tm);
+					ncb.setText(String.valueOf(dkks.countData()));
+					ncd.setText(String.valueOf(dkkt.countData()));
+					ncm.setText(String.valueOf(dkkh.countData()));
+					ncb1.setText(String.valueOf(gks.countData()));
+					ncd1.setText(String.valueOf(tlkt.countData()));
 					ncm1.setText(String.valueOf(gcnkh.countData()));
 					break;
 				}
@@ -403,7 +433,12 @@ public class ManagerInterface extends JFrame implements ActionListener, WindowLi
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+		ncb.setText(String.valueOf(dkks.countData()));
+		ncd.setText(String.valueOf(dkkt.countData()));
+		ncm.setText(String.valueOf(dkkh.countData()));
+		ncb1.setText(String.valueOf(gks.countData()));
+		ncd1.setText(String.valueOf(tlkt.countData()));
+		ncm1.setText(String.valueOf(gcnkh.countData()));
 	}
 
 	@Override
